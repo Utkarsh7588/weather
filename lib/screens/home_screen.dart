@@ -1,30 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:weather/location/get_location.dart';
+import 'package:weather/states/states.dart';
 
 import '../location/loaction.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({Key? key}) : super(key: key);
-  String? latitude;
-  String? longitude;
+class HomeScreen extends ConsumerWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('HomeScreen'),
       ),
       body: Center(
-        child: Column(children: [
-          TextButton(
-              onPressed: () async {
-                // Position position = await Geolocator.getCurrentPosition();
-                // latitude = position.latitude.toString();
-                // longitude = position.longitude.toString();
-                print(GetLocation().get_position().toString());
-              },
-              child: Text('press here')),
-        ]),
+        child: Consumer(
+          builder: (context, ref, child) {
+            WeatherState state = ref.watch(weatherProvider);
+            if (state is InitialState) {
+              return Text('initial State');
+            }
+            if (state is WeatherLoadingState) {
+              return Text('loading...');
+            }
+            if (state is WeatherLoadedState) {
+              String cityname = state.weather.cityName.toString();
+              return Text(cityname);
+            }
+            if (state is ErrorWeatherState) {
+              return Text(state.message);
+            } else {
+              return Text('something');
+            }
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          ref.read(weatherProvider.notifier).fetchweather();
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

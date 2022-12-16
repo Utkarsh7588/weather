@@ -2,9 +2,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:weather/location/location_exceptions.dart';
 
 class Location {
-  Position position;
-  Location({required this.position});
-  _location() async {
+  Future<Position> location() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -23,9 +21,7 @@ class Location {
     if (permission == LocationPermission.deniedForever) {
       throw LocationPermissionPermanentlyDeniedException();
     }
-  }
-
-  double getLatitude() {
-    return position.latitude;
+    return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.medium);
   }
 }
