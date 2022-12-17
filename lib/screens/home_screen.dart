@@ -26,8 +26,8 @@ class HomeScreen extends ConsumerWidget {
               return Text('loading...');
             }
             if (state is WeatherLoadedState) {
-              String cityname = state.weather.cityName.toString();
-              return Text(cityname);
+              double? temp = state.weather.data?[0].temp;
+              return Text(temp.toString());
             }
             if (state is ErrorWeatherState) {
               return Text(state.message);
