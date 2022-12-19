@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:weather/api/fetch_api.dart';
-import 'package:weather/models/get_weather/datum.dart';
 import 'package:weather/models/get_weather/get_weather.dart';
+import 'package:weather/states/state_notifier.dart';
 
 final weatherProvider = StateNotifierProvider<WeatherNotifier, WeatherState>(
     (ref) => WeatherNotifier());
@@ -19,22 +18,9 @@ class WeatherLoadedState extends WeatherState {
   final GetWeather weather;
 }
 
+class GetCityNameState extends WeatherState {}
+
 class ErrorWeatherState extends WeatherState {
   ErrorWeatherState({required this.message});
   final String message;
-}
-
-class WeatherNotifier extends StateNotifier<WeatherState> {
-  WeatherNotifier() : super(InitialState());
-  final FetchWeatherAPI _fetchWeatherAPI = FetchWeatherAPI();
-  fetchweather() async {
-    try {
-      state = WeatherLoadingState();
-      GetWeather weather = await _fetchWeatherAPI.processData();
-      state = WeatherLoadedState(weather: weather);
-    } catch (e) {
-      String message = e.toString();
-      state = ErrorWeatherState(message: message);
-    }
-  }
 }
